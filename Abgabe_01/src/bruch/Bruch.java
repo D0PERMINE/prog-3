@@ -26,7 +26,6 @@ public class Bruch implements Comparable<Bruch>{
 	
 	private int zaehler;
 	private int nenner;
-	private int ganzeZahl;
 	
 	/**
 	 * Konstruktor
@@ -40,10 +39,11 @@ public class Bruch implements Comparable<Bruch>{
 	
 	/**
 	 * Konstruktor
-	 * @param ganzeZahl Ganze Zahl als "Bruch"
+	 * @param zaehler mit eins teilen, um eine Ganze Zahl zu haben
 	 */
-	public Bruch(int ganzeZahl) {
-		this.ganzeZahl = ganzeZahl;
+	public Bruch(int zaehler) {
+//		this.ganzeZahl = ganzeZahl;  // alt und falsche Idee
+		this(zaehler, 1);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class Bruch implements Comparable<Bruch>{
 	 * @return Den Bruch als Kommazahl.
 	 */
 	public double ausrechnen() {
-		double bruchAlsKommazahl = this.zaehler / this.nenner;
+		double bruchAlsKommazahl = (double) this.zaehler / this.nenner;
 		return bruchAlsKommazahl;
 	}
 	
@@ -106,7 +106,7 @@ public class Bruch implements Comparable<Bruch>{
 	 * @return Quotient aus den beiden Bruechen
 	 */
 	public Bruch dividieren(Bruch b) {
-		Bruch quotientBruch = new Bruch(kehrwert().multiplizieren(b).zaehler, kehrwert().multiplizieren(b).nenner);
+		Bruch quotientBruch = new Bruch(kehrwert().multiplizieren(b).nenner, kehrwert().multiplizieren(b).zaehler);
 		return quotientBruch;
 	}
 	
@@ -127,19 +127,11 @@ public class Bruch implements Comparable<Bruch>{
 	}
 
 	/**
-	 * Gibt die ganze Zahl des "Bruchs" zurueck.
-	 * @return Ganze Zahl des "Bruchs"
-	 */
-	public int getGanzeZahl() {
-		return ganzeZahl;
-	}
-
-	/**
 	 * Setzt den Nenner des Bruchs.
 	 * @param nenner Nenner des Bruchs
 	 * @throws IllegalArgumentException wenn man Nenner 0 setzen moechte
 	 */
-	public void setNenner(int nenner) throws IllegalArgumentException{
+	public void setNenner(int nenner) throws IllegalArgumentException{	// ArithmetikException
 		if (nenner != 0) {
 			this.nenner = nenner;			
 		} else {
