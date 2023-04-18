@@ -119,7 +119,7 @@ public abstract class Konto implements Comparable<Konto>
 		if (betrag < 0 || !w.waehrungsExistiert()) {
 			throw new IllegalArgumentException("Der angegeben Betrag oder die angegebene Waehrung ist nicht erlaubt.");
 		} 
-		this.kontostand += w.waehrungInWaehrungUmrechnen(betrag, this.waehrung);
+		einzahlen(w.waehrungInWaehrungUmrechnen(betrag, this.waehrung));
 	}
 	
 	/**
