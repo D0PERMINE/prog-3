@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Waehrung.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">abgabe_03</a> &gt; <a href="index.source.html" class="el_package">bankprojekt.verarbeitung</a> &gt; <span class="el_source">Waehrung.java</span></div><h1>Waehrung.java</h1><pre class="source lang-java linenums">/**
+ * Modul: Programmierung 3 (SoSe 23)
+ * Dozent: Dorothea Hubrich
+ * 
+ * Name: Timo Ji
+ * Matrikelnummber: 575725
+ * 
+ * Partner: /
+ * 
+ * Anmerkungen: /
+ * 
+ */
+
+package bankprojekt.verarbeitung;
+import org.decimal4j.util.DoubleRounder;
+
+/**
+ * Enum Waehung beinhaltet eine bestimmte Menge von Waehrungen mit ihren jeweiligen Umrechnungskurs zum Euro 
+ * und dazu relevante Methoden zum Umrechnen.
+ * @author timoji
+ *
+ */
+<span class="fc" id="L23">public enum Waehrung {</span>
+
+<span class="fc" id="L25">	EUR(1.0000), BGN(1.9558), MKD(62.6200), DKK(7.4604);</span>
+	
+	private final double umrechnungskursZumEuro;
+	
+	/**
+	 * Konstruktor 
+	 * @param umrechnungskursZumEuro der jeweilige Umrechnungskurs zum Euro
+	 */
+<span class="fc" id="L33">	private Waehrung(double umrechnungskursZumEuro) {</span>
+<span class="fc" id="L34">		this.umrechnungskursZumEuro = umrechnungskursZumEuro;</span>
+<span class="fc" id="L35">	}</span>
+	
+	/**
+	 * Rechnet den betrag in Euro in die jeweils angegebene Waehrung um.
+	 * @param betrag betrag in Euro
+	 * @return umgerechneter Betrag in neuer Waehrung
+	 */
+	public double euroInWaehrungUmrechnen(double betrag) {	
+<span class="fc" id="L43">		return DoubleRounder.round(betrag * this.umrechnungskursZumEuro, 2);</span>
+	}
+	
+	/**
+	 * Rechnet den betrag in der der momentanen Waehrung in Euro um.
+	 * @param betrag betrag in der momentanen Waehrung
+	 * @return umgerechneter Betrag in Euro
+	 */
+	public double waehrungInEuroUmrechnen(double betrag) {
+<span class="fc" id="L52">		return DoubleRounder.round(betrag / this.umrechnungskursZumEuro, 2);</span>
+	}
+	
+	/**
+	 * Rechnet den Betrag in alter Waehrung, in neuer Waehrung um
+	 * @param betrag Betrag in alter Waehrung
+	 * @param w neue Waehrung
+	 * @return gibt den Betrag in neuer Waehrung zurueck
+	 */
+	public double waehrungInWaehrungUmrechnen(double betrag, Waehrung w) {
+<span class="fc" id="L62">		return DoubleRounder.round(w.euroInWaehrungUmrechnen(this.waehrungInEuroUmrechnen(betrag)), 2);</span>
+	}
+	
+	/**
+	 * Prueft, ob die angegebene Waehrung existiert.
+	 * @return true, wenn Waehrung existiert, sonst false
+	 */
+	public boolean waehrungsExistiert() {
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">		for(Waehrung waehrung: Waehrung.values()) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">			if (this == waehrung) {</span>
+<span class="fc" id="L72">				return true;</span>
+			}
+		}
+<span class="nc" id="L75">		return false;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

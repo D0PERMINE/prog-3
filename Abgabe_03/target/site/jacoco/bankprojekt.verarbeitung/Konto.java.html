@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Konto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">abgabe_03</a> &gt; <a href="index.source.html" class="el_package">bankprojekt.verarbeitung</a> &gt; <span class="el_source">Konto.java</span></div><h1>Konto.java</h1><pre class="source lang-java linenums">/**
+ * Modul: Programmierung 3 (SoSe 23)
+ * Dozent: Dorothea Hubrich
+ * 
+ * Name: Timo Ji
+ * Matrikelnummber: 575725
+ * 
+ * Partner: /
+ * 
+ * Anmerkungen: /
+ * 
+ */
+
+package bankprojekt.verarbeitung;
+
+import com.google.common.primitives.Doubles;
+
+/**
+ * stellt ein allgemeines Bank-Konto dar
+ */
+public abstract class Konto implements Comparable&lt;Konto&gt;
+{
+	/**
+	 * Methode sollte hier eigentlich nicht stehen, wegen
+	 * keine Ausgaben in Verarbeitungsklassen!!!
+	 */
+	public void ausgeben()
+	{
+<span class="nc" id="L29">		System.out.println(this.toString());</span>
+<span class="nc" id="L30">	}</span>
+	
+	/** 
+	 * der Kontoinhaber
+	 */
+	private Kunde inhaber;
+
+	/**
+	 * die Kontonummer
+	 */
+	private final long nummer;
+
+	/**
+	 * der aktuelle Kontostand
+	 */
+	private double kontostand;
+	
+	/**
+	 * die aktuelle Waerhung
+	 */
+	private Waehrung waehrung;
+
+	/**
+	 * setzt den aktuellen Kontostand
+	 * @param kontostand neuer Kontostand
+	 */
+	protected void setKontostand(double kontostand) {
+<span class="fc" id="L57">		this.kontostand = kontostand;</span>
+<span class="fc" id="L58">	}</span>
+
+	/**
+	 * Wenn das Konto gesperrt ist (gesperrt = true), können keine Aktionen daran mehr vorgenommen werden,
+	 * die zum Schaden des Kontoinhabers wären (abheben, Inhaberwechsel)
+	 */
+	private boolean gesperrt;
+
+	/**
+	 * Setzt die beiden Eigenschaften kontoinhaber und kontonummer auf die angegebenen Werte,
+	 * der anfängliche Kontostand wird auf 0 gesetzt. 
+	 * Waehrung is zu Beginn immer Euro.
+	 *
+	 * @param inhaber der Inhaber
+	 * @param kontonummer die gewünschte Kontonummer
+	 * @throws IllegalArgumentException wenn der inhaber null ist
+	 */
+<span class="fc" id="L75">	public Konto(Kunde inhaber, long kontonummer) {</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">		if(inhaber == null)</span>
+<span class="nc" id="L77">			throw new IllegalArgumentException(&quot;Inhaber darf nicht null sein!&quot;);</span>
+<span class="fc" id="L78">		this.inhaber = inhaber;</span>
+<span class="fc" id="L79">		this.nummer = kontonummer;</span>
+<span class="fc" id="L80">		this.kontostand = 0;</span>
+<span class="fc" id="L81">		this.gesperrt = false;</span>
+<span class="fc" id="L82">		waehrung = Waehrung.EUR;</span>
+<span class="fc" id="L83">	}</span>
+	
+	/**
+	 * setzt alle Eigenschaften des Kontos auf Standardwerte
+	 */
+	public Konto() {
+<span class="nc" id="L89">		this(Kunde.MUSTERMANN, 1234567);</span>
+<span class="nc" id="L90">	}</span>
+
+	/**
+	 * liefert den Kontoinhaber zurück
+	 * @return   der Inhaber
+	 */
+	public final Kunde getInhaber() {
+<span class="nc" id="L97">		return this.inhaber;</span>
+	}
+	
+	/**
+	 * Hebt vom Konto Geld ab.
+	 * @param betrag der abzuhebende Betrag
+	 * @param w in der Waehrung zu abehebender Betrag
+	 * @return true, falls Abhebung gelungen, sonst false
+	 * @throws GesperrtException wenn Konto gesperrt ist
+	 * @throws IllegalArgumentException wenn abzuhebender Betrag kleiner als 0 ist oder eine nicht vorhandene Waherungs angegeben wird
+	 */
+	public boolean abheben(double betrag, Waehrung w) throws GesperrtException, IllegalArgumentException {
+<span class="fc" id="L109">		return abheben(w.waehrungInWaehrungUmrechnen(betrag, this.waehrung));</span>
+	}
+	
+	/**
+	 * Einzahlen in das Konto.
+	 * @param betrag der einzuzahlen Betrag
+	 * @param w in der Waehrung einzuzahlender Betrag
+	 * @throws IllegalArgumentException wenn einzuzahlender Betrag kleiner als 0 ist oder eine nicht vorhandene Waherungs angegeben wird
+	 */
+	public void einzahlen(double betrag, Waehrung w) throws IllegalArgumentException {
+<span class="nc bnc" id="L119" title="All 4 branches missed.">		if (betrag &lt; 0 || !w.waehrungsExistiert()) {</span>
+<span class="nc" id="L120">			throw new IllegalArgumentException(&quot;Der angegeben Betrag oder die angegebene Waehrung ist nicht erlaubt.&quot;);</span>
+		} 
+<span class="nc" id="L122">		einzahlen(w.waehrungInWaehrungUmrechnen(betrag, this.waehrung));</span>
+<span class="nc" id="L123">	}</span>
+	
+	/**
+	 * Gibt die aktuelle Waehrung zurueck
+	 * @return aktuelle waehrung
+	 */
+	public Waehrung getAktuelleWaehrung() {
+<span class="fc" id="L130">		return this.waehrung;</span>
+	}
+	
+	/**
+	 * Aendert die aktuelle Waehrung in die angegebene Waehrung um
+	 * @param neu die neue Waehrung
+	 * @throws IllegalArgumentException wenn die Waehrung nicht existiert
+	 */
+	public void waehrungswechsel(Waehrung neu) throws IllegalArgumentException {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">		if (neu.waehrungsExistiert()) {</span>
+<span class="fc" id="L140">			this.kontostand = this.waehrung.waehrungInWaehrungUmrechnen(this.kontostand, neu);</span>
+<span class="fc" id="L141">		} else {</span>
+<span class="nc" id="L142">			throw new IllegalArgumentException(&quot;Diese Waehrung ist nicht vorhanden.&quot;);</span>
+		}
+<span class="fc" id="L144">	}</span>
+	
+	/**
+	 * Setzt neue Waehrung
+	 * @param neu neue Waehrung
+	 */
+	public void setWaehrung(Waehrung neu) {
+<span class="fc" id="L151">		this.waehrung = neu;</span>
+<span class="fc" id="L152">	}</span>
+	
+	/**
+	 * setzt den Kontoinhaber
+	 * @param kinh   neuer Kontoinhaber
+	 * @throws GesperrtException wenn das Konto gesperrt ist
+	 * @throws IllegalArgumentException wenn kinh null ist
+	 */
+	public final void setInhaber(Kunde kinh) throws GesperrtException{
+<span class="nc bnc" id="L161" title="All 2 branches missed.">		if (kinh == null)</span>
+<span class="nc" id="L162">			throw new IllegalArgumentException(&quot;Der Inhaber darf nicht null sein!&quot;);</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if(this.gesperrt)</span>
+<span class="nc" id="L164">			throw new GesperrtException(this.nummer);        </span>
+<span class="nc" id="L165">		this.inhaber = kinh;</span>
+
+<span class="nc" id="L167">	}</span>
+	
+	/**
+	 * liefert den aktuellen Kontostand
+	 * @return   Kontostand
+	 */
+	public final double getKontostand() {
+<span class="fc" id="L174">		return kontostand;</span>
+	}
+
+	/**
+	 * liefert die Kontonummer zurück
+	 * @return   Kontonummer
+	 */
+	public final long getKontonummer() {
+<span class="nc" id="L182">		return nummer;</span>
+	}
+
+	/**
+	 * liefert zurück, ob das Konto gesperrt ist oder nicht
+	 * @return true, wenn das Konto gesperrt ist
+	 */
+	public final boolean isGesperrt() {
+<span class="fc" id="L190">		return gesperrt;</span>
+	}
+	
+	/**
+	 * Erhöht den Kontostand um den eingezahlten Betrag.
+	 *
+	 * @param betrag double
+	 * @throws IllegalArgumentException wenn der betrag negativ ist 
+	 */
+	public void einzahlen(double betrag) {
+<span class="pc bpc" id="L200" title="2 of 4 branches missed.">		if (betrag &lt; 0 || !Doubles.isFinite(betrag)) {</span>
+<span class="nc" id="L201">			throw new IllegalArgumentException(&quot;Falscher Betrag&quot;);</span>
+		}
+<span class="fc" id="L203">		setKontostand(getKontostand() + betrag);</span>
+<span class="fc" id="L204">	}</span>
+	
+	@Override
+	public String toString() {
+		String ausgabe;
+<span class="nc" id="L209">		ausgabe = &quot;Kontonummer: &quot; + this.getKontonummerFormatiert()</span>
+<span class="nc" id="L210">				+ System.getProperty(&quot;line.separator&quot;);</span>
+<span class="nc" id="L211">		ausgabe += &quot;Inhaber: &quot; + this.inhaber;</span>
+<span class="nc" id="L212">		ausgabe += &quot;Aktueller Kontostand: &quot; + getKontostandFormatiert() + &quot; &quot;;</span>
+<span class="nc" id="L213">		ausgabe += this.getGesperrtText() + System.getProperty(&quot;line.separator&quot;);</span>
+<span class="nc" id="L214">		return ausgabe;</span>
+	}
+
+	/**
+	 * Mit dieser Methode wird der geforderte Betrag vom Konto abgehoben, wenn es nicht gesperrt ist
+	 * und die speziellen Abheberegeln des jeweiligen Kontotyps die Abhebung erlauben
+	 *
+	 * @param betrag double
+	 * @throws GesperrtException wenn das Konto gesperrt ist
+	 * @throws IllegalArgumentException wenn der betrag negativ oder unendlich oder NaN ist 
+	 * @return true, wenn die Abhebung geklappt hat, 
+	 * 		   false, wenn sie abgelehnt wurde
+	 */
+	public abstract boolean abheben(double betrag) 
+								throws GesperrtException;
+	
+	/**
+	 * sperrt das Konto, Aktionen zum Schaden des Benutzers sind nicht mehr möglich.
+	 */
+	public final void sperren() {
+<span class="nc" id="L234">		this.gesperrt = true;</span>
+<span class="nc" id="L235">	}</span>
+
+	/**
+	 * entsperrt das Konto, alle Kontoaktionen sind wieder möglich.
+	 */
+	public final void entsperren() {
+<span class="nc" id="L241">		this.gesperrt = false;</span>
+<span class="nc" id="L242">	}</span>
+	
+	
+	/**
+	 * liefert eine String-Ausgabe, wenn das Konto gesperrt ist
+	 * @return &quot;GESPERRT&quot;, wenn das Konto gesperrt ist, ansonsten &quot;&quot;
+	 */
+	public final String getGesperrtText()
+	{
+<span class="nc bnc" id="L251" title="All 2 branches missed.">		if (this.gesperrt)</span>
+		{
+<span class="nc" id="L253">			return &quot;GESPERRT&quot;;</span>
+		}
+		else
+		{
+<span class="nc" id="L257">			return &quot;&quot;;</span>
+		}
+	}
+	
+	/**
+	 * liefert die ordentlich formatierte Kontonummer
+	 * @return auf 10 Stellen formatierte Kontonummer
+	 */
+	public String getKontonummerFormatiert()
+	{
+<span class="nc" id="L267">		return String.format(&quot;%10d&quot;, this.nummer);</span>
+	}
+	
+	/**
+	 * liefert den ordentlich formatierten Kontostand
+	 * @return formatierter Kontostand mit 2 Nachkommastellen und Währungsbezeichnung
+	 */
+	public String getKontostandFormatiert()
+	{
+<span class="fc" id="L276">		return String.format(&quot;%10.2f %s&quot; , this.getKontostand(), this.getAktuelleWaehrung());</span>
+	}
+	
+	/**
+	 * Vergleich von this mit other; Zwei Konten gelten als gleich,
+	 * wen sie die gleiche Kontonummer haben
+	 * @param other das Vergleichskonto
+	 * @return true, wenn beide Konten die gleiche Nummer haben
+	 */
+	@Override
+	public boolean equals(Object other)
+	{
+<span class="nc bnc" id="L288" title="All 2 branches missed.">		if(this == other)</span>
+<span class="nc" id="L289">			return true;</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">		if(other == null)</span>
+<span class="nc" id="L291">			return false;</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">		if(this.getClass() != other.getClass())</span>
+<span class="nc" id="L293">			return false;</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">		if(this.nummer == ((Konto)other).nummer)</span>
+<span class="nc" id="L295">			return true;</span>
+		else
+<span class="nc" id="L297">			return false;</span>
+	}
+	
+	@Override
+	public int hashCode()
+	{
+<span class="nc" id="L303">		return 31 + (int) (this.nummer ^ (this.nummer &gt;&gt;&gt; 32));</span>
+	}
+
+	@Override
+	public int compareTo(Konto other)
+	{
+<span class="nc bnc" id="L309" title="All 2 branches missed.">		if(other.getKontonummer() &gt; this.getKontonummer())</span>
+<span class="nc" id="L310">			return -1;</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">		if(other.getKontonummer() &lt; this.getKontonummer())</span>
+<span class="nc" id="L312">			return 1;</span>
+<span class="nc" id="L313">		return 0;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
